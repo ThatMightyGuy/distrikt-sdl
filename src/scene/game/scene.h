@@ -4,10 +4,10 @@
 #include <engine/scene.h>
 #include <engine/input.h>
 
-void init();
+void game_init();
 
-void update(float deltaTime);
+void game_update(float deltaTime);
 
-int destroy();
+int game_destroy();
 
-static scene_t game_scene = { init, update, destroy };
+static scene_t game_scene = { game_init, game_update, game_destroy };

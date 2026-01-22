@@ -46,3 +46,8 @@ int scene_destroy()
 
     return status;
 }
+
+float runtime()
+{
+    return SDL_GetPerformanceCounter() * 1000 / (float)SDL_GetPerformanceFrequency();
+}

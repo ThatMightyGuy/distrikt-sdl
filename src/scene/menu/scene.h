@@ -1,8 +1,11 @@
 #pragma once
 
+#include <math.h>
+
 #include <engine/engine.h>
 #include <engine/scene.h>
 #include <engine/input.h>
+
 #include "scene/game/scene.h"
 
 void menu_init();

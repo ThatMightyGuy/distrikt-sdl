@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include <SDL3/SDL_log.h>
+#include <SDL3/SDL_timer.h>
 
 typedef struct
 {
@@ -33,3 +34,5 @@ void scene_update(float deltaTime);
 // Null-safe scene destroy function
 // Returns 0 if successful or there is no destroy callback
 int scene_destroy();
+
+float runtime();
