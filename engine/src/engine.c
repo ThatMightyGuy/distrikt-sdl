@@ -1,52 +1,74 @@
 #include "engine.h"
 
-const uint32_t SDL_INIT_FLAGS = SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
+bool is_alive = false;
 
-SDL_Color ClearColor = {0};
-
-void render_clear(SDL_Renderer *renderer)
+void engine_init(const char *title, int w, int h, SDL_WindowFlags flags)
 {
-    SDL_Color oldDrawColor;
-    SDL_GetRenderDrawColor(
-        renderer,
-        &oldDrawColor.r,
-        &oldDrawColor.g,
-        &oldDrawColor.b,
-        &oldDrawColor.a
-    );
-    SDL_SetRenderDrawColor(
-        renderer,
-        ClearColor.r,
-        ClearColor.g,
-        ClearColor.b,
-        ClearColor.a
-    );
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(
-        renderer,
-        oldDrawColor.r,
-        oldDrawColor.g,
-        oldDrawColor.b,
-        oldDrawColor.a
-    );
-}
-
-void engine_init()
-{
-    SDL_Init(SDL_INIT_FLAGS);
-    Window = SDL_CreateWindow("test app", 800, 600, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
-    Renderer = SDL_CreateRenderer(Window, "direct3d");
-    if(Renderer == NULL)
-        SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Unable to open a graphics context: %s", SDL_GetError());
-    SDL_SetRenderTarget(Renderer, NULL);
-    SDL_SetRenderVSync(Renderer, 1);
+    is_alive = true;
+    render_init(title, w, h, flags);
+    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Input init");
     input_init();
+    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Input init done");
 }
+
+bool engine_is_alive()
+{
+    return is_alive;
+}
+
+float deltaTime;
 
 bool shouldExit;
 
+void event_poll()
+{
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+            case SDL_EVENT_GAMEPAD_ADDED:
+            case SDL_EVENT_GAMEPAD_REMOVED:
+                __input_on_gamepad_device(event.gdevice);
+                break;
+
+
+            case SDL_EVENT_MOUSE_MOTION:
+                __input_on_mouse(event.motion);
+                break;
+
+
+            case SDL_EVENT_MOUSE_WHEEL:
+                __input_on_mwheel(event.wheel);
+                break;
+
+
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                __input_on_mouse_down(event.button);
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                __input_on_mouse_up(event.button);
+                break;
+
+
+            case SDL_EVENT_KEY_DOWN:
+                __input_on_key_down(event.key);
+                break;
+            case SDL_EVENT_KEY_UP:
+                __input_on_key_up(event.key);
+                break;
+
+
+            case SDL_EVENT_QUIT:
+                engine_exit();
+                return;
+        }
+    }
+}
+
 void engine_handoff()
 {
+    if (!is_alive) return;
     shouldExit = false;
 
     Uint64 ticksNow = SDL_GetPerformanceCounter();
@@ -54,16 +76,26 @@ void engine_handoff()
 
     while (!shouldExit)
     {
-        SDL_PumpEvents();
+        event_poll();
 
         ticksLast = ticksNow;
         ticksNow = SDL_GetPerformanceCounter();
-        float deltaTime = (float)(ticksNow - ticksLast) * 1000 / (float)SDL_GetPerformanceFrequency();
+        deltaTime = (float)(ticksNow - ticksLast) * 1000 / (float)SDL_GetPerformanceFrequency();
 
-        render_clear(Renderer);
-        scene_update(deltaTime);
-        SDL_RenderPresent(Renderer);
+        engine_render_clear();
+        scene_update(deltaTime / 1000);
+        SDL_RenderPresent(engine_get_renderer());
     }
+}
+
+float engine_get_frametime()
+{
+    return deltaTime;
+}
+
+float engine_get_framerate()
+{
+    return 1000 / deltaTime;
 }
 
 void engine_exit()
@@ -74,33 +106,8 @@ void engine_exit()
 
 void engine_destroy()
 {
+    is_alive = false;
     engine_exit();
-    SDL_DestroyRenderer(Renderer);
-    SDL_DestroyWindow(Window);
-    SDL_Quit();
+    render_destroy();
 }
 
-SDL_Window *engine_get_window()
-{
-    return Window;
-}
-
-SDL_Renderer *engine_get_renderer()
-{
-    return Renderer;
-}
-
-SDL_Color engine_get_clear_color()
-{
-    return ClearColor;
-}
-
-void engine_set_clear_color(SDL_Color color)
-{
-    ClearColor = color;
-}
-
-void engine_set_clear_colorB(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-    ClearColor = (SDL_Color){ r, g, b, a };
-}
