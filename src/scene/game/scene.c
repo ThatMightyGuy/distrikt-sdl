@@ -2,7 +2,7 @@
 
 const float sizeMul = 40.0;
 
-const float gravity = 9.8 * sizeMul;
+const float gravity = -9.8 * sizeMul;
 const float maxSpeed = 10 * sizeMul;
 const float maxCrouchSpeed = 2 * sizeMul;
 const float accel = 20 * sizeMul;
@@ -13,7 +13,7 @@ const float walkDrag = 2;
 const float crouchDrag = 2;
 const float airDrag = 1.05;
 
-const float floorLevel = 0.9;
+const float cameraSpeed = 200;
 
 object_t player;
 
@@ -28,9 +28,24 @@ void game_init()
 
 }
 
+object_t grid;
+
+#define GRID_SIZE 50
+const SDL_FPoint gridPoints[GRID_SIZE * GRID_SIZE];
+void draw_grid()
+{
+    const float spacing = 50;
+    for(int x = -GRID_SIZE / 2; x < GRID_SIZE / 2 - 1; x++)
+        for(int y = -GRID_SIZE / 2; y < GRID_SIZE / 2 - 1; y++)
+        {
+            SDL_FPoint p = { x * spacing, y * spacing };
+            p = world_to_screen(p);
+            SDL_RenderPoint(Renderer, p.x, p.y);
+        }
+}
+
 // SDL_FPoint player_pos = { 150, 250 };
 SDL_FPoint player_vel;
-
 
 bool isGrounded = false;
 bool jumpLock = false;
@@ -49,29 +64,29 @@ void game_update(float deltaTime)
 
     float hoz = input_get("input_hoz") / 32767.0;
     float vert = input_get("input_vert") / 32767.0;
-    bool isCrouched = vert < -0.25;
+    bool isCrouched = vert < -0.5;
 
     if(isCrouched)
     {
-        player.scale    = (SDL_FPoint) { 10, 25 };
-        player.origin   = (SDL_FPoint) { 5, -25 };
+        player.scale  = (SDL_FPoint) { 10, 25 };
+        player.origin = (SDL_FPoint) { 5, -25 };
     }
     else
     {
-        player.scale    = (SDL_FPoint) { 10, 45 };
-        player.origin   = (SDL_FPoint) { 5, -45 };
+        player.scale  = (SDL_FPoint) { 10, 45 };
+        player.origin = (SDL_FPoint) { 5, -45 };
     }
 
-    if(vert > 0.25)
+    if(vert > 0.5)
     {
         if(isGrounded)
         {
-            player_vel.y = -jumpForce;
+            player_vel.y = jumpForce;
             isGrounded = false;
         }
-        else if(!jumpLock && player_vel.y > 0)
+        else if(!jumpLock && player_vel.y < 0)
         {
-            player_vel.y -= jumpForce;
+            player_vel.y = jumpForce;
             player_vel.x *= dashStrength;
             jumpLock = true;
             dashEnded = false;
@@ -87,6 +102,14 @@ void game_update(float deltaTime)
         player_vel.x += hoz * accel * deltaTime;
     }
 
+    float choz = input_get("input_cam_hoz") / 32767.0;
+    float cvert = input_get("input_cam_vert") / 32767.0;
+
+    float t = 2 * deltaTime;
+
+    Camera->position.x = Camera->position.x * (1 - t) + (player.position.x + choz * cameraSpeed) * t;
+    Camera->position.y = Camera->position.y * (1 - t) + (player.position.y + player.scale.y * 1.5 + cvert * cameraSpeed) * t;
+
     int rw, rh;
     SDL_GetCurrentRenderOutputSize(Renderer, &rw, &rh);
     float sw, sh;
@@ -95,9 +118,9 @@ void game_update(float deltaTime)
     float h = rh / sh;
 
     float drag;
-    if(player.position.y / h >= floorLevel)
+    if(player.position.y <= 0)
     {
-        player.position.y = h * floorLevel;
+        player.position.y = 0;
         isGrounded = true;
         jumpLock = false;
 
@@ -119,10 +142,13 @@ void game_update(float deltaTime)
     player.position.x += player_vel.x * deltaTime;
     player.position.y += player_vel.y * deltaTime;
 
-    SDL_FRect floor = { 0, h * floorLevel, w, h };
+
+    SDL_FRect floor = { 0, h / 2 + Camera->position.y, w, h };
     //SDL_FRect player = { player.position.x - 5, player.position.y, 10, isCrouched ? -25 : -45 };
 
-
+    SDL_SetRenderDrawColor(Renderer, 50, 50, 50, 255);
+    draw_grid();
+    
     SDL_SetRenderDrawColorFloat(Renderer, 0.09, 0.57, 0.32, 1);
     SDL_RenderFillRect(Renderer, &floor);
     // SDL_SetRenderDrawColorFloat(Renderer, 0.9, 0.9, 0.9, 1);

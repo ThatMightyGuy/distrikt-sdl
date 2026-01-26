@@ -19,3 +19,5 @@ typedef struct
 } object_t;
 
 object_t object_init();
+
+void object_destroy(object_t *object);

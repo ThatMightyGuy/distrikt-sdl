@@ -20,6 +20,8 @@ int scene_set(scene_t scene)
 
 void scene_init()
 {
+    object_t *camera = engine_get_camera();
+    *camera = object_init();
     if(__scene.init != NULL)
         __scene.init();
     else
@@ -45,7 +47,7 @@ int scene_destroy()
         status = __scene.destroy();
     }
 
-    __scene = (scene_t){ NULL, NULL, NULL };
+    __scene = (scene_t) { NULL, NULL, NULL, 1};
 
     return status;
 }
@@ -64,23 +66,25 @@ void scene_drawdebug(object_t object)
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
+    SDL_FPoint position = world_to_screen(object.position);
+
     SDL_FRect bounds = {
-        object.position.x - object.origin.x,
-        object.position.y + object.origin.y,
+        position.x - object.origin.x,
+        position.y + object.origin.y,
         object.scale.x,
         object.scale.y
     };
     SDL_RenderRect(renderer, &bounds);
 
     SDL_SetRenderDrawColor(renderer, 100, 170, 0, 255);
-    SDL_FPoint origin = { object.position.x - object.origin.x, object.position.y + object.origin.y };
-    SDL_RenderLine(renderer, object.position.x, object.position.y, origin.x, origin.y);
+    SDL_FPoint origin = { position.x - object.origin.x, position.y + object.origin.y };
+    SDL_RenderLine(renderer, position.x, position.y, origin.x, origin.y);
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderPoints(renderer, &object.position, 1);
+    SDL_RenderPoint(renderer, position.x, position.y);
 
     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-    SDL_RenderPoints(renderer, &origin, 1);
+    SDL_RenderPoint(renderer, origin.x, origin.y);
 
     SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
 }

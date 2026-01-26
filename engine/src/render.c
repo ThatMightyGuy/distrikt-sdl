@@ -2,31 +2,43 @@
 
 const SDL_WindowFlags SDL_INIT_FLAGS = SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_HAPTIC;
 
-SDL_Window *window;
+SDL_Window *Window;
 
 SDL_Renderer *Renderer;
+
+object_t *Camera;
+
+object_t camera;
 
 SDL_Color clearColor = {0};
 
 void render_init(const char *title, int w, int h, SDL_WindowFlags flags)
 {
     SDL_Init(SDL_INIT_FLAGS);
-    window = SDL_CreateWindow(title, w, h, flags);
-    Renderer = SDL_CreateRenderer(window, NULL);
+    Window = SDL_CreateWindow(title, w, h, flags);
+    Renderer = SDL_CreateRenderer(Window, NULL);
     if(Renderer == NULL)
         SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Unable to open a graphics context: %s", SDL_GetError());
     SDL_SetRenderTarget(Renderer, NULL);
     SDL_SetRenderVSync(Renderer, 1);
+
+    camera = object_init();
+    Camera = &camera;
 }
 
 SDL_Window *engine_get_window()
 {
-    return window;
+    return Window;
 }
 
 SDL_Renderer *engine_get_renderer()
 {
     return Renderer;
+}
+
+object_t *engine_get_camera()
+{
+    return Camera;
 }
 
 void engine_render_clear()
@@ -89,9 +101,26 @@ void engine_set_draw_color(SDL_Color color)
     SDL_SetRenderDrawColor(Renderer, color.r, color.g, color.b, color.a);
 }
 
+SDL_FPoint world_to_screen(SDL_FPoint point)
+{
+    int rw, rh;
+    SDL_GetCurrentRenderOutputSize(Renderer, &rw, &rh);
+    float sw, sh;
+    SDL_GetRenderScale(Renderer, &sw, &sh);
+    float w = rw / sw;
+    float h = rh / sh;
+
+    SDL_FPoint result;
+    result.x = point.x - camera.position.x + w / 2;
+    result.y = point.y - camera.position.y;
+    result.y = h / 2 - result.y;
+    return result;
+}
+
 void render_destroy()
 {
+    object_destroy(Camera);
     SDL_DestroyRenderer(Renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyWindow(Window);
     SDL_Quit();
 }

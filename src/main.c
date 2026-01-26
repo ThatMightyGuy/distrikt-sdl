@@ -9,16 +9,6 @@
 
 void register_inputs()
 {
-    // int count;
-    // SDL_JoystickID *joysticks = SDL_GetGamepads(&count);
-    // SDL_Gamepad *gamepad = NULL;
-    // if(count > 0)
-    // {
-    //     SDL_OpenGamepad(joysticks[0]);
-    //     gamepad = SDL_GetGamepadFromID(joysticks[0]);
-    //     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Gamepad: %s", SDL_GetGamepadName(gamepad));
-    // }
-
     action_t action = {
         "input_vert",
         SDL_SCANCODE_UP,
@@ -44,6 +34,32 @@ void register_inputs()
         SDL_GAMEPAD_BUTTON_DPAD_LEFT
     };
     input_register(action, false);
+
+    action = (action_t) {
+        "input_cam_vert",
+        SDL_SCANCODE_W,
+        SDL_SCANCODE_S,
+        true,
+        NULL,
+        SDL_GAMEPAD_AXIS_LEFTY,
+        true,
+        -1,
+        -1
+    };
+    input_register(action, false);
+
+    action = (action_t) {
+        "input_cam_hoz",
+        SDL_SCANCODE_D,
+        SDL_SCANCODE_A,
+        true,
+        NULL,
+        SDL_GAMEPAD_AXIS_LEFTX,
+        false,
+        -1,
+        -1
+    };
+    input_register(action, false);
 }
 
 int main() {
@@ -51,12 +67,11 @@ int main() {
 
     register_inputs();
 
-    // common_init();
     // Default scene would be scene/menu
     scene_set(menu_scene);
 
     input_check_sanity();
-    
+
     engine_handoff();
 
     engine_destroy();

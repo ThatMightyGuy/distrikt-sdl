@@ -29,7 +29,7 @@ void input_init()
     {
         SDL_OpenGamepad(joysticks[0]);
         gamepad = SDL_GetGamepadFromID(joysticks[0]);
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Gamepad: %s", SDL_GetGamepadName(gamepad));
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Gamepad: %s", SDL_GetGamepadName(gamepad));
     }
 }
 
@@ -100,7 +100,7 @@ void __input_on_key_up(SDL_KeyboardEvent e)
 ///       Probably unnecessary though
 bool input_register(action_t action, bool force)
 {
-    SDL_LogError(SDL_LOG_CATEGORY_INPUT, "Registering input '%s'", action.name);
+    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Registering input '%s'", action.name);
     if(actions.count >= actions.capacity)
     {
         actions.capacity *= 2;

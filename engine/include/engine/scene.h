@@ -7,6 +7,7 @@
 
 #include "engine.h"
 #include "object.h"
+#include "render.h"
 
 typedef struct
 {
