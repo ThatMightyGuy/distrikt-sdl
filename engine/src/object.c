@@ -7,6 +7,21 @@ object_t object_init()
     return result;
 }
 
+SDL_FPoint object_position(object_t object)
+{
+    SDL_FPoint pos = object.position;
+    object_t *parent = object.parent;
+
+    while(parent != NULL)
+    {
+        pos.x += parent->position.x;
+        pos.y += parent->position.y;
+        parent = parent->parent;
+    }
+
+    return pos;
+}
+
 void object_destroy(object_t *object)
 {
     for(size_t i = 0; i < object->children.count; i++)

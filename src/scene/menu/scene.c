@@ -42,8 +42,8 @@ void menu_update(float deltaTime)
     x2 = size * sin(t);
     y2 = size * cos(t);
 
-    points1[point] = (SDL_FPoint){ x + x1, y + yl };
-    points2[point] = (SDL_FPoint){ x + 50 + x2, y - 50 + y2 };
+    points1[point] = POINT(x + x1, y + yl);
+    points2[point] = POINT(x + 50 + x2, y - 50 + y2);
 
     point = (point + 1) % POINTS;
 

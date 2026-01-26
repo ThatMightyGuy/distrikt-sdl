@@ -1,5 +1,7 @@
 #include "scene.h"
 
+da_t objects;
+
 int scene_set(scene_t scene)
 {
     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Scene change!");
@@ -22,6 +24,9 @@ void scene_init()
 {
     object_t *camera = engine_get_camera();
     *camera = object_init();
+
+    objects = da_init(sizeof(object_t));
+
     if(__scene.init != NULL)
         __scene.init();
     else

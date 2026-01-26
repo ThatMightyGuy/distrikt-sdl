@@ -22,9 +22,9 @@ void game_init()
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Game Init!");
     engine_set_clear_colorB(20, 20, 20, 255);
     player = object_init();
-    player.position = (SDL_FPoint) { 150, 250 };
-    player.scale    = (SDL_FPoint) { 10, 45 };
-    player.origin   = (SDL_FPoint) { 5, -45 };
+    player.position = POINT(150, 250);
+    player.scale    = POINT(10, 45);
+    player.origin   = POINT(5, -45);
 
 }
 
@@ -68,13 +68,13 @@ void game_update(float deltaTime)
 
     if(isCrouched)
     {
-        player.scale  = (SDL_FPoint) { 10, 25 };
-        player.origin = (SDL_FPoint) { 5, -25 };
+        player.scale  = POINT(10, 25);
+        player.origin = POINT(5, -25);
     }
     else
     {
-        player.scale  = (SDL_FPoint) { 10, 45 };
-        player.origin = (SDL_FPoint) { 5, -45 };
+        player.scale  = POINT(10, 45);
+        player.origin = POINT(5, -45);
     }
 
     if(vert > 0.5)
@@ -148,7 +148,7 @@ void game_update(float deltaTime)
 
     SDL_SetRenderDrawColor(Renderer, 50, 50, 50, 255);
     draw_grid();
-    
+
     SDL_SetRenderDrawColorFloat(Renderer, 0.09, 0.57, 0.32, 1);
     SDL_RenderFillRect(Renderer, &floor);
     // SDL_SetRenderDrawColorFloat(Renderer, 0.9, 0.9, 0.9, 1);

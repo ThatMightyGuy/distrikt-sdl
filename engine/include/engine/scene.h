@@ -46,3 +46,8 @@ float scene_time();
 
 // Draw object pivot and bounding box
 void scene_drawdebug(object_t object);
+
+// Add an object to scene hierarchy
+// YOU MUST HOLD ONTO THE OBJECT
+void scene_add(object_t *object);
+
