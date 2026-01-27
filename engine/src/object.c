@@ -4,6 +4,7 @@ object_t object_init()
 {
     object_t result = {0};
     result.children = da_init(sizeof(object_t));
+    result.components = da_init(sizeof(component_t));
     return result;
 }
 
@@ -20,6 +21,11 @@ SDL_FPoint object_position(object_t object)
     }
 
     return pos;
+}
+
+void add_component(object_t *object, component_t *component)
+{
+    da_put(&object->components, component);
 }
 
 void object_destroy(object_t *object)

@@ -4,6 +4,8 @@
 #include <engine/object.h>
 #include <engine/scene.h>
 #include <engine/input.h>
+#include <engine/component/debugrender.h>
+#include <engine/component/solidrender.h>
 
 #include "common.h"
 

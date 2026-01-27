@@ -8,6 +8,7 @@ const float maxCrouchSpeed = 2 * sizeMul;
 const float accel = 20 * sizeMul;
 const float jumpForce = 7 * sizeMul;
 const float dashStrength = 2;
+const float rotateSpeed = 0.5;
 
 const float walkDrag = 2;
 const float crouchDrag = 2;
@@ -16,6 +17,8 @@ const float airDrag = 1.05;
 const float cameraSpeed = 200;
 
 object_t player;
+debugrender_t player_renderer2;
+solidrender_t player_renderer;
 
 void game_init()
 {
@@ -26,6 +29,14 @@ void game_init()
     player.scale    = POINT(10, 45);
     player.origin   = POINT(5, -45);
 
+    player_renderer2 = debugrender_init();
+    player_renderer = solidrender_init();
+    player_renderer.texture = texture_load("assets/test.png");
+
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "blendMode: %d", player_renderer.blendMode);
+    add_component(&player, &player_renderer.component);
+    add_component(&player, &player_renderer2.component);
+    scene_add(&player);
 }
 
 object_t grid;
@@ -44,7 +55,6 @@ void draw_grid()
         }
 }
 
-// SDL_FPoint player_pos = { 150, 250 };
 SDL_FPoint player_vel;
 
 bool isGrounded = false;
@@ -82,11 +92,13 @@ void game_update(float deltaTime)
         if(isGrounded)
         {
             player_vel.y = jumpForce;
+            player.rotation = 0;
             isGrounded = false;
         }
         else if(!jumpLock && player_vel.y < 0)
         {
             player_vel.y = jumpForce;
+            player.rotation = 0;
             player_vel.x *= dashStrength;
             jumpLock = true;
             dashEnded = false;
@@ -121,6 +133,7 @@ void game_update(float deltaTime)
     if(player.position.y <= 0)
     {
         player.position.y = 0;
+        player.rotation = 0;
         isGrounded = true;
         jumpLock = false;
 
@@ -136,24 +149,27 @@ void game_update(float deltaTime)
         drag = airDrag;
     }
 
+    if(!isGrounded)
+    {
+        if(player_vel.x < 0)
+            player.rotation -= rotateSpeed * deltaTime;
+        else
+            player.rotation += rotateSpeed * deltaTime;
+    }
+
     player_vel.x -= player_vel.x * drag * deltaTime;
     player_vel.y -= player_vel.y * drag * deltaTime;
 
     player.position.x += player_vel.x * deltaTime;
     player.position.y += player_vel.y * deltaTime;
 
-
     SDL_FRect floor = { 0, h / 2 + Camera->position.y, w, h };
-    //SDL_FRect player = { player.position.x - 5, player.position.y, 10, isCrouched ? -25 : -45 };
 
     SDL_SetRenderDrawColor(Renderer, 50, 50, 50, 255);
     draw_grid();
 
     SDL_SetRenderDrawColorFloat(Renderer, 0.09, 0.57, 0.32, 1);
     SDL_RenderFillRect(Renderer, &floor);
-    // SDL_SetRenderDrawColorFloat(Renderer, 0.9, 0.9, 0.9, 1);
-    // SDL_RenderFillRect(Renderer, &player);
-    scene_drawdebug(player);
 }
 
 int game_destroy()

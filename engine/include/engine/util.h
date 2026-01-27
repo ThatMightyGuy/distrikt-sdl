@@ -2,6 +2,11 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <math.h>
+
+#include <SDL3/SDL_rect.h>
+
+#define POINT(x, y) (SDL_FPoint) { x, y }
 
 typedef struct
 {
@@ -25,3 +30,9 @@ void da_clear(da_t *list);
 
 // Destroy an array and free held resources
 void da_free(da_t *list);
+
+// Get points that make up a rectangle, wound clockwise with points[0] being the upper left corner
+void rect_to_points(SDL_FRect rect, SDL_FPoint points[4]);
+
+// Rotate a point around another point by 'angle' radians
+SDL_FPoint point_rotate(SDL_FPoint point, SDL_FPoint origin, float angle);

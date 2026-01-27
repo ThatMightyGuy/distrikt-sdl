@@ -5,6 +5,7 @@
 
 #include <SDL3/SDL_events.h>
 
+#include "asset.h"
 #include "render.h"
 #include "input.h"
 #include "scene.h"

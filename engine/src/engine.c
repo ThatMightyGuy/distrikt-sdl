@@ -5,10 +5,12 @@ bool is_alive = false;
 void engine_init(const char *title, int w, int h, SDL_WindowFlags flags)
 {
     is_alive = true;
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Renderer init");
     render_init(title, w, h, flags);
-    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Input init");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Asset manager init");
+    asset_init(engine_get_renderer());
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Input manager init");
     input_init();
-    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Input init done");
 }
 
 bool engine_is_alive()
@@ -108,6 +110,11 @@ void engine_destroy()
 {
     is_alive = false;
     engine_exit();
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying the input manager");
+    input_destroy();
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying the asset manager");
+    asset_destroy();
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying the renderer");
     render_destroy();
 }
 

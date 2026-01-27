@@ -1,10 +1,13 @@
 set(ENGINE_SOURCES
     src/engine.c
+    src/asset.c
     src/input.c
     src/object.c
     src/render.c
     src/scene.c
     src/util.c
+    src/component/debugrender.c
+    src/component/solidrender.c
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})

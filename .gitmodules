@@ -4,6 +4,3 @@
 [submodule "vendor/SDL_image"]
 	path = vendor/SDL_image
 	url = https://github.com/libsdl-org/SDL_image.git
-[submodule "vendor/libpng"]
-	path = vendor/libpng
-	url = https://github.com/pnggroup/libpng.git

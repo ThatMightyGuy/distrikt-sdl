@@ -47,3 +47,24 @@ void da_free(da_t *list)
     list->typesize = 0;
     free(list->data);
 }
+
+void rect_to_points(SDL_FRect rect, SDL_FPoint points[4])
+{
+    points[0] = POINT(rect.x, rect.y);
+    points[1] = POINT(rect.x + rect.w, rect.y);
+    points[2] = POINT(rect.x + rect.w, rect.y + rect.h);
+    points[3] = POINT(rect.x, rect.y + rect.h);
+}
+
+SDL_FPoint point_rotate(SDL_FPoint point, SDL_FPoint origin, float angle)
+{
+    SDL_FPoint result = { point.x - origin.x, point.y - origin.y };
+
+    float sine = sin(angle);
+    float cosine = cos(angle);
+
+    result.x = (point.x * cosine - point.y * sine) + origin.x;
+    result.y = (point.y * cosine + point.x * sine) + origin.y;
+
+    return result;
+}

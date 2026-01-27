@@ -25,7 +25,7 @@ void scene_init()
     object_t *camera = engine_get_camera();
     *camera = object_init();
 
-    objects = da_init(sizeof(object_t));
+    objects = da_init(sizeof(object_t*));
 
     if(__scene.init != NULL)
         __scene.init();
@@ -40,6 +40,19 @@ void scene_update(float deltaTime)
     deltaTime *= __scene.timescale;
     if(__scene.update != NULL)
         __scene.update(deltaTime);
+
+    for(size_t i = 0; i < objects.count; ++i)
+    {
+        object_t *obj = objects.data[i];
+        if(obj == NULL) continue;
+
+        for(size_t c = 0; c < obj->components.count; ++c)
+        {
+            component_t *comp = obj->components.data[c];
+            if(comp->enabled && comp->update != NULL)
+                comp->update(obj, comp->container);
+        }
+    }
     runTime += deltaTime;
 }
 
@@ -51,6 +64,21 @@ int scene_destroy()
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Calling scene destructor...");
         status = __scene.destroy();
     }
+
+    // Destroy objects
+    for(size_t i = 0; i < objects.count; ++i)
+    {
+        object_t *obj = objects.data[i];
+        if(obj == NULL) continue;
+
+        for(size_t c = 0; c < obj->components.count; ++c)
+        {
+            component_t *comp = obj->components.data[c];
+            if(comp->destroy != NULL)
+                comp->destroy(obj, comp->container);
+        }
+    }
+    da_clear(&objects);
 
     __scene = (scene_t) { NULL, NULL, NULL, 1};
 
@@ -92,4 +120,9 @@ void scene_drawdebug(object_t object)
     SDL_RenderPoint(renderer, origin.x, origin.y);
 
     SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
+}
+
+void scene_add(object_t *object)
+{
+    da_append(&objects, object);
 }

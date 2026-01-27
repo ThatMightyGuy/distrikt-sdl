@@ -6,10 +6,7 @@
 
 #include "util.h"
 
-#define POINT(x, y) (SDL_FPoint) { x, y }
-
-
-typedef struct
+typedef struct object_t
 {
     // SDL_Bitmap spritesheet;
     // index?
@@ -18,12 +15,26 @@ typedef struct
     SDL_FPoint origin;
     float rotation;
 
-    object_t *parent;
+    da_t components;
+    struct object_t *parent;
     da_t children;
 } object_t;
+
+typedef struct
+{
+    const char *name;
+    bool enabled;
+
+    void (*update)(object_t*, void*);
+    void (*destroy)(object_t*, void*);
+    // Pointer to a container object
+    void *container;
+} component_t;
 
 object_t object_init();
 
 SDL_FPoint object_position(object_t object);
+
+void add_component(object_t *object, component_t *component);
 
 void object_destroy(object_t *object);
