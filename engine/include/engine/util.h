@@ -36,3 +36,5 @@ void rect_to_points(SDL_FRect rect, SDL_FPoint points[4]);
 
 // Rotate a point around another point by 'angle' radians
 SDL_FPoint point_rotate(SDL_FPoint point, SDL_FPoint origin, float angle);
+
+float degrees(float radians);

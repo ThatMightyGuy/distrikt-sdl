@@ -16,10 +16,8 @@ typedef struct
     SDL_Color color;
     // Draw blend mode used for rendering
     SDL_BlendMode blendMode;
-    // Affine transform top right vector
-    SDL_FPoint affineTR;
-    // Affine transform bottom left vector
-    SDL_FPoint affineBL;
+    // Texture mirroring mode
+    SDL_FlipMode flip;
 } solidrender_t;
 
 solidrender_t solidrender_init();

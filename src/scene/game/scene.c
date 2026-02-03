@@ -30,10 +30,11 @@ void game_init()
     player.origin   = POINT(5, -45);
 
     player_renderer2 = debugrender_init();
-    player_renderer = solidrender_init();
-    player_renderer.texture = texture_load("assets/test.png");
+    player_renderer  = solidrender_init();
+    // player_renderer.texture = texture_load("assets/test.png");
+    // player_renderer.texture = get_missing_texture();
+    // player_renderer2.component.enabled = false;
 
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "blendMode: %d", player_renderer.blendMode);
     add_component(&player, &player_renderer.component);
     add_component(&player, &player_renderer2.component);
     scene_add(&player);
@@ -151,10 +152,7 @@ void game_update(float deltaTime)
 
     if(!isGrounded)
     {
-        if(player_vel.x < 0)
-            player.rotation -= rotateSpeed * deltaTime;
-        else
-            player.rotation += rotateSpeed * deltaTime;
+        player.rotation += rotateSpeed * (player_vel.x / maxSpeed) * deltaTime;
     }
 
     player_vel.x -= player_vel.x * drag * deltaTime;
@@ -170,6 +168,11 @@ void game_update(float deltaTime)
 
     SDL_SetRenderDrawColorFloat(Renderer, 0.09, 0.57, 0.32, 1);
     SDL_RenderFillRect(Renderer, &floor);
+    SDL_FRect dst_rect;
+    dst_rect.x = ((float) (100 - 32)) / 2.0f;
+    dst_rect.y = ((float) (100 - 32)) / 2.0f;
+    dst_rect.w = (float) 32;
+    dst_rect.h = (float) 32;
 }
 
 int game_destroy()

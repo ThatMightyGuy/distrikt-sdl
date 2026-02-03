@@ -68,3 +68,9 @@ SDL_FPoint point_rotate(SDL_FPoint point, SDL_FPoint origin, float angle)
 
     return result;
 }
+
+float degrees(float radians)
+{
+    const float rad2deg = 57.29578;
+    return radians * rad2deg;
+}

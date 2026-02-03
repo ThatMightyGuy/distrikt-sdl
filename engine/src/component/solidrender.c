@@ -18,7 +18,17 @@ void __solidrender(object_t *object, void *container)
     );
     SDL_SetTextureAlphaMod(cont->texture, cont->color.a);
     SDL_SetTextureBlendMode(cont->texture, cont->blendMode);
-    SDL_RenderTextureAffine(renderer, tex, NULL, &object->origin, &cont->affineTR, &cont->affineBL);
+
+    SDL_FPoint origin = { object->origin.x, -object->origin.y };
+    SDL_FPoint start = { object->position.x - origin.x, object->position.y + origin.y };
+    start = world_to_screen(start);
+    SDL_FRect dest = {
+        start.x,
+        start.y,
+        object->scale.x,
+        object->scale.y
+    };
+    SDL_RenderTextureRotated(renderer, tex, NULL, &dest, degrees(object->rotation), &origin, cont->flip);
 }
 
 solidrender_t solidrender_init()
@@ -35,8 +45,7 @@ solidrender_t solidrender_init()
         get_missing_texture(),
         (SDL_Color) { 255, 255, 255, 255 },
         SDL_BLENDMODE_NONE,
-        POINT(100, 100),
-        POINT(0, 0)
+        SDL_FLIP_NONE
     };
     result.component.container = &result;
     return result;
