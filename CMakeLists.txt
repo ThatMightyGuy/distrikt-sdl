@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.50)
 project(Distrikt C VERSION 1.0.0 LANGUAGES C)
 
-set(CFLAGS "")
+set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -ggdb")
 
-set(CMAKE_C_COMPILER ${CC} ${CFLAGS})
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 

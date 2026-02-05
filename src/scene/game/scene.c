@@ -31,7 +31,7 @@ void game_init()
 
     player_renderer2 = debugrender_init();
     player_renderer  = solidrender_init();
-    // player_renderer.texture = texture_load("assets/test.png");
+    player_renderer.texture = texture_load("assets/test.png");
     // player_renderer.texture = get_missing_texture();
     // player_renderer2.component.enabled = false;
 

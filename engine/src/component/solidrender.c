@@ -28,7 +28,7 @@ void __solidrender(object_t *object, void *container)
         object->scale.x,
         object->scale.y
     };
-    SDL_RenderTextureRotated(renderer, tex, NULL, &dest, degrees(object->rotation), &origin, cont->flip);
+    SDL_RenderTextureRotated(renderer, texture_load("assets/test.png"), NULL, &dest, degrees(object->rotation), &origin, cont->flip);
 }
 
 solidrender_t solidrender_init()
