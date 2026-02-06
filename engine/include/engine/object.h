@@ -20,21 +20,21 @@ typedef struct object_t
     da_t children;
 } object_t;
 
+#define COMPONENT_PREAMBLE \
+    const char *name; \
+    bool enabled; \
+    void (*update)(object_t*, void*); \
+    void (*destroy)(object_t*, void*);
+
 typedef struct
 {
-    const char *name;
-    bool enabled;
-
-    void (*update)(object_t*, void*);
-    void (*destroy)(object_t*, void*);
-    // Pointer to a container object
-    void *container;
+    COMPONENT_PREAMBLE
 } component_t;
 
 object_t object_init();
 
 SDL_FPoint object_position(object_t object);
 
-void add_component(object_t *object, component_t *component);
+void add_component(object_t *object, void *component);
 
 void object_destroy(object_t *object);

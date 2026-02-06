@@ -22,6 +22,9 @@ da_t da_init(size_t typesize);
 // Grab an element by its index
 void *da_at(da_t *list, size_t index);
 
+// Grab the last element
+void *da_last(da_t *list);
+
 // Append an item to the end
 void da_append(da_t *list, void *value);
 

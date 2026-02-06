@@ -62,11 +62,7 @@ SDL_Surface *surface_load(const char *path)
 
 SDL_Texture *texture_load(const char *path)
 {
-    // SDL_Surface *surface = surface_load(path);
-    // if(surface == NULL)
-    //     return get_missing_texture();
     SDL_Texture *tex = IMG_LoadTexture(rend, as_local(path));
-    // SDL_DestroySurface(surface);
     if(tex == NULL)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to create static texture: '%s'", SDL_GetError());

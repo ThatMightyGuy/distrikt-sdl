@@ -1,8 +1,8 @@
-#include "component/solidrender.h"
+#include "component/spriterender.h"
 
-void __solidrender(object_t *object, void *container)
+void __spriterender(object_t *object, void *container)
 {
-    solidrender_t *cont = container;
+    spriterender_t *cont = container;
     if(cont == NULL) return;
     SDL_Texture *tex = cont->texture;
     if(tex == NULL) tex = get_missing_texture();
@@ -31,22 +31,16 @@ void __solidrender(object_t *object, void *container)
     SDL_RenderTextureRotated(renderer, tex, NULL, &dest, degrees(object->rotation), &origin, cont->flip);
 }
 
-solidrender_t solidrender_init()
+void spriterender_init(spriterender_t *comp)
 {
-    component_t component = {
-        "solidrender",
+    *comp = (spriterender_t) {
+        "spriterender",
         true,
-        __solidrender,
+        __spriterender,
         NULL,
-        NULL
-    };
-    solidrender_t result = {
-        component,
         get_missing_texture(),
         (SDL_Color) { 255, 255, 255, 255 },
-        SDL_BLENDMODE_NONE,
+        SDL_BLENDMODE_BLEND,
         SDL_FLIP_NONE
     };
-    result.component.container = &result;
-    return result;
 }

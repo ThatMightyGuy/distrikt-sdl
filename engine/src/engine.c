@@ -68,13 +68,20 @@ void event_poll()
     }
 }
 
+Uint64 ticksNow, ticksLast;
+
+void engine_reset_frametime()
+{
+    ticksNow = SDL_GetPerformanceCounter();
+    ticksLast = 0;
+}
+
 void engine_handoff()
 {
     if (!is_alive) return;
     shouldExit = false;
 
-    Uint64 ticksNow = SDL_GetPerformanceCounter();
-    Uint64 ticksLast = 0;
+    engine_reset_frametime();
 
     while (!shouldExit)
     {

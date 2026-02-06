@@ -9,7 +9,8 @@
 
 typedef struct
 {
-    component_t component;
+    // component_t fields
+    COMPONENT_PREAMBLE
 
     SDL_Texture *texture;
     // Texture tint
@@ -18,6 +19,6 @@ typedef struct
     SDL_BlendMode blendMode;
     // Texture mirroring mode
     SDL_FlipMode flip;
-} solidrender_t;
+} spriterender_t;
 
-solidrender_t solidrender_init();
+void spriterender_init(spriterender_t *comp);

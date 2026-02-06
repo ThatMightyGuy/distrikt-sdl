@@ -42,18 +42,12 @@ void __debugrender(object_t *object, void *container)
     SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
 }
 
-debugrender_t debugrender_init()
+void debugrender_init(debugrender_t *comp)
 {
-    component_t component = {
+    *comp = (debugrender_t) {
         "debugrender",
         true,
         __debugrender,
         NULL,
-        NULL
     };
-    debugrender_t result = {
-        component
-    };
-    result.component.container = &result;
-    return result;
 }

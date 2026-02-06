@@ -1,6 +1,7 @@
 set(SOURCES
     scene/game/scene.c
     scene/menu/scene.c
+    prefab/player.c
 )
 
 add_executable(${PROJECT_NAME} main.c ${SOURCES})

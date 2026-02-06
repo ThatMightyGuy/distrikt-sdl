@@ -9,7 +9,7 @@
 
 typedef struct
 {
-    component_t component;
+    COMPONENT_PREAMBLE
 } debugrender_t;
 
-debugrender_t debugrender_init();
+void debugrender_init(debugrender_t *comp);

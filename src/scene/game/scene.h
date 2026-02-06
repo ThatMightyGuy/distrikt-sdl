@@ -5,9 +5,11 @@
 #include <engine/scene.h>
 #include <engine/input.h>
 #include <engine/component/debugrender.h>
-#include <engine/component/solidrender.h>
+#include <engine/component/spriterender.h>
 
 #include "common.h"
+
+#include "prefab/player.h"
 
 void game_init();
 

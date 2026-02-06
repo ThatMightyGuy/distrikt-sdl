@@ -16,6 +16,10 @@ void engine_init(const char *title, int w, int h, SDL_WindowFlags flags);
 // Is the engine not destroyed?
 bool engine_is_alive();
 
+// Reset timers used for deltaTime calculation
+// Done after scene load as long loads will cause the game to bork
+void engine_reset_frametime();
+
 // Hand off flow control to the engine
 void engine_handoff();
 

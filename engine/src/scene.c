@@ -25,12 +25,14 @@ void scene_init()
     object_t *camera = engine_get_camera();
     *camera = object_init();
 
-    objects = da_init(sizeof(object_t*));
+    objects = da_init(sizeof(object_t**));
 
     if(__scene.init != NULL)
         __scene.init();
     else
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "init is null");
+
+    engine_reset_frametime();
 }
 
 float runTime = 0;
@@ -52,9 +54,9 @@ void scene_update(float deltaTime)
 
         for(size_t c = 0; c < (*obj)->components.count; ++c)
         {
-            component_t *comp = da_at(&(*obj)->components, c);
-            if(comp->enabled && comp->update != NULL)
-                comp->update(*obj, &comp->container);
+            component_t **comp = da_at(&(*obj)->components, c);
+            if((*comp)->enabled && (*comp)->update != NULL)
+                (*comp)->update(*obj, *comp);
         }
     }
     runTime += deltaTime;
@@ -72,19 +74,19 @@ int scene_destroy()
     // Destroy objects
     for(size_t i = 0; i < objects.count; ++i)
     {
-        object_t *obj = da_at(&objects, i);
+        object_t **obj = da_at(&objects, i);
         if(obj == NULL) continue;
 
-        for(size_t c = 0; c < obj->components.count; ++c)
+        for(size_t c = 0; c < (*obj)->components.count; ++c)
         {
-            component_t *comp = da_at(&obj->components, c);
-            if(comp->destroy != NULL)
-                comp->destroy(obj, comp->container);
+            component_t **comp = da_at(&(*obj)->components, c);
+            if((*comp)->destroy != NULL)
+                (*comp)->destroy(*obj, *comp);
         }
     }
     da_clear(&objects);
 
-    __scene = (scene_t) { NULL, NULL, NULL, 1};
+    __scene = (scene_t) { NULL, NULL, NULL, 0};
 
     return status;
 }

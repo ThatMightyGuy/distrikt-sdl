@@ -17,6 +17,13 @@ void *da_at(da_t *list, size_t index)
     return (char*)list->data + (list->typesize * index);
 }
 
+void *da_last(da_t *list)
+{
+    if(list->count == 0)
+        return NULL;
+    return (char*)list->data + (list->typesize * (list->count - 1));
+}
+
 void expand(da_t *list)
 {
     if(list->count >= list->capacity)

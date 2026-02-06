@@ -9,7 +9,7 @@ set(ENGINE_SOURCES
     src/scene.c
     src/util.c
     src/component/debugrender.c
-    src/component/solidrender.c
+    src/component/spriterender.c
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
