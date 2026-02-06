@@ -79,7 +79,7 @@ SDL_Texture *texture_load(const char *path)
 void asset_destroy()
 {
     for(size_t i = 0; i < textures.count; ++i)
-        SDL_DestroyTexture(textures.data[i]);
+        SDL_DestroyTexture(da_at(&textures, i));
     da_free(&textures);
     SDL_DestroyTexture(missingTexture);
 }

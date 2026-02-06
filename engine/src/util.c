@@ -10,25 +10,46 @@ da_t da_init(size_t typesize)
     };
 }
 
+void *da_at(da_t *list, size_t index)
+{
+    if(index >= list->count)
+        return NULL;
+    return (char*)list->data + (list->typesize * index);
+}
+
 void expand(da_t *list)
 {
     if(list->count >= list->capacity)
+    {
         list->data = realloc(list->data, list->capacity * 2 * list->typesize);
+        void *dest = (char*)list->data + (list->typesize * list->capacity);
+        memset(dest, 0, list->capacity * list->typesize);
+        list->capacity *= 2;
+    }
 }
 
 void da_append(da_t *list, void *value)
 {
     expand(list);
-    list->data[list->count++] = value;
+    void *dest = (char*)list->data + (list->typesize * list->count);
+    memcpy(dest, value, list->typesize);
+    list->count++;
+}
+
+void da_set(da_t *list, size_t index, void *value)
+{
+    if(index >= list->count)
+        return;
+    memcpy(da_at(list, index), value, list->typesize);
 }
 
 void da_put(da_t *list, void *value)
 {
     for(size_t i = 0; i < list->count; ++i)
     {
-        if(list->data[i] == NULL)
+        if(da_at(list, i) == NULL)
         {
-            list->data[i] = value;
+            da_set(list, i, value);
             return;
         }
     }

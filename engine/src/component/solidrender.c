@@ -1,5 +1,7 @@
 #include "component/solidrender.h"
 
+static SDL_Texture *test;
+
 void __solidrender(object_t *object, void *container)
 {
     solidrender_t *cont = container;
@@ -28,6 +30,7 @@ void __solidrender(object_t *object, void *container)
         object->scale.x,
         object->scale.y
     };
+    if(!test) test = texture_load("assets/test.png");
     SDL_RenderTextureRotated(renderer, texture_load("assets/test.png"), NULL, &dest, degrees(object->rotation), &origin, cont->flip);
 }
 

@@ -43,14 +43,18 @@ void scene_update(float deltaTime)
 
     for(size_t i = 0; i < objects.count; ++i)
     {
-        object_t *obj = objects.data[i];
-        if(obj == NULL) continue;
-
-        for(size_t c = 0; c < obj->components.count; ++c)
+        object_t **obj = da_at(&objects, i);
+        if(obj == NULL)
         {
-            component_t *comp = obj->components.data[c];
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "obj was null");
+            continue;
+        }
+
+        for(size_t c = 0; c < (*obj)->components.count; ++c)
+        {
+            component_t *comp = da_at(&(*obj)->components, c);
             if(comp->enabled && comp->update != NULL)
-                comp->update(obj, comp->container);
+                comp->update(*obj, comp->container);
         }
     }
     runTime += deltaTime;
@@ -68,12 +72,12 @@ int scene_destroy()
     // Destroy objects
     for(size_t i = 0; i < objects.count; ++i)
     {
-        object_t *obj = objects.data[i];
+        object_t *obj = da_at(&objects, i);
         if(obj == NULL) continue;
 
         for(size_t c = 0; c < obj->components.count; ++c)
         {
-            component_t *comp = obj->components.data[c];
+            component_t *comp = da_at(&obj->components, c);
             if(comp->destroy != NULL)
                 comp->destroy(obj, comp->container);
         }
@@ -124,5 +128,5 @@ void scene_drawdebug(object_t object)
 
 void scene_add(object_t *object)
 {
-    da_append(&objects, object);
+    da_append(&objects, &object);
 }

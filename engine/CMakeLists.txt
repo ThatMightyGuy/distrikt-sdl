@@ -1,3 +1,5 @@
+set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -ggdb")
+
 set(ENGINE_SOURCES
     src/engine.c
     src/asset.c

@@ -25,13 +25,17 @@ SDL_FPoint object_position(object_t object)
 
 void add_component(object_t *object, component_t *component)
 {
-    da_put(&object->components, component);
+    da_append(&object->components, component);
 }
 
 void object_destroy(object_t *object)
 {
     for(size_t i = 0; i < object->children.count; i++)
-        object_destroy((object_t*)object->children.data[i]);
+    {
+        object_destroy((object_t*)da_at(&object->children, i));
+        // account for potential hierarchy loops
+        da_set(&object->children, i, NULL);
+    }
 
     da_free(&object->children);
     object->position = (SDL_FPoint){0};
