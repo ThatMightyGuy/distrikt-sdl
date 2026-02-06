@@ -21,4 +21,4 @@ target_include_directories(engine
         ${CMAKE_CURRENT_SOURCE_DIR}/include/engine
 )
 
-target_link_libraries(engine PUBLIC vendor)
+target_link_libraries(engine PUBLIC vendor m)

@@ -36,6 +36,7 @@ void game_init()
     // player_renderer2.component.enabled = false;
 
     add_component(&player, &player_renderer.component);
+    // player_renderer2.component.enabled = false;
     add_component(&player, &player_renderer2.component);
     scene_add(&player);
 }

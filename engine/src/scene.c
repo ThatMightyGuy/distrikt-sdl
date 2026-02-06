@@ -54,7 +54,7 @@ void scene_update(float deltaTime)
         {
             component_t *comp = da_at(&(*obj)->components, c);
             if(comp->enabled && comp->update != NULL)
-                comp->update(*obj, comp->container);
+                comp->update(*obj, &comp->container);
         }
     }
     runTime += deltaTime;
