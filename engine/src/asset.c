@@ -1,6 +1,7 @@
 #include "asset.h"
 
 da_t textures;
+da_t texturePaths;
 
 SDL_Renderer *rend;
 
@@ -11,6 +12,7 @@ SDL_Texture *missingTexture;
 void asset_init(SDL_Renderer *renderer)
 {
     textures = da_init(sizeof(SDL_Texture*));
+    texturePaths = da_init(sizeof(const char*));
 
     rend = renderer;
 
@@ -62,20 +64,32 @@ SDL_Surface *surface_load(const char *path)
 
 SDL_Texture *texture_load(const char *path)
 {
-    SDL_Texture *tex = IMG_LoadTexture(rend, as_local(path));
+    char *localPath = as_local(path);
+    // Use cached texture if present
+    for(size_t i = 0; i < texturePaths.count; ++i)
+    {
+        if(SDL_strcasecmp(da_at(&texturePaths, i), localPath) == 0)
+            return da_at(&textures, i);
+    }
+
+    SDL_Texture *tex = IMG_LoadTexture(rend, localPath);
     if(tex == NULL)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to create static texture: '%s'", SDL_GetError());
         return get_missing_texture();
     }
     da_append(&textures, &tex);
+    da_append(&texturePaths, localPath);
     return tex;
 }
 
 void asset_destroy()
 {
     for(size_t i = 0; i < textures.count; ++i)
+    {
         SDL_DestroyTexture(da_at(&textures, i));
+    }
     da_free(&textures);
+    da_free(&texturePaths);
     SDL_DestroyTexture(missingTexture);
 }
